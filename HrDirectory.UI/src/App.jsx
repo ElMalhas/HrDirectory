@@ -1,24 +1,36 @@
 import { useState, useEffect } from 'react';
-import api from './services/api';
+import LoginPage from './pages/LoginPage';
 
 function App() {
-  const [statusMessage, setStatusMessage] = useState('Connecting with API...');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Verifica se o utilizador já tem sessão ao abrir a página
   useEffect(() => {
-    api.get('/api/status')
-      .then((response) => {
-        setStatusMessage(response.data);
-      })
-      .catch((error) => {
-        console.error("Error while connecting with API:", error);
-        setStatusMessage('Error: Not possible to connect with API.');
-      });
-  }, []); 
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    setIsAuthenticated(false);
+  };
+
+  // Se não estiver autenticado, mostra o ecrã de Login
+  if (!isAuthenticated) {
+    return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
+  // Se estiver autenticado, mostra a aplicação (futura DepartmentsPage)
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>HR Directory Frontend</h1>
-      <p><strong>API Status:</strong> {statusMessage}</p>
+      <p>Bem-vindo! Estás autenticado com sucesso.</p>
+      <button onClick={handleLogout} style={{ padding: '10px', cursor: 'pointer' }}>
+        Sair (Logout)
+      </button>
     </div>
   );
 }
