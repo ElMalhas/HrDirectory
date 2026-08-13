@@ -1,5 +1,8 @@
 using HrDirectory.Api.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +25,26 @@ builder.Services.AddCors(options =>
     });
 });
 
+// --- JWT Authentication Configuration ---
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is missing");
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+            ClockSkew = TimeSpan.Zero       // Token expires on the exact moment
+        };
+    });
+
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();          // Tells the app that Controllers will be used
 
 var app = builder.Build();
@@ -35,10 +57,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapControllers();                      // Map the routes from the Controllers
 
-// Activate CORS before endpoints
+// 1. Activate CORS before authentication and endpoints
 app.UseCors("AllowReactApp");
+
+// 2. Activate Security Middleware (Order matters!)
+app.UseAuthentication(); 
+app.UseAuthorization();  
+
+// 3. Map the routes from the Controllers
+app.MapControllers();                      
 
 // Health Check endpoint
 app.MapGet("/api/status", () => "API is working!")

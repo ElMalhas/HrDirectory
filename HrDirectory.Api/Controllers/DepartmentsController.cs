@@ -18,7 +18,7 @@ public class DepartmentsController : ControllerBase
     }
 
     // GET - Fetch Department
-    [HttpGet("{id}")]           
+    [HttpGet("{guid}")]           
     public async Task<ActionResult<ReadDepartmentDTO>> GetDepartmentAsync(Guid guid)
     {
         var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == guid && d.IsActive);
@@ -66,14 +66,14 @@ public class DepartmentsController : ControllerBase
             Description = department.Description
         };
 
-        return CreatedAtAction(nameof(GetDepartmentAsync), new {id = department.DepartmentId}, response);          
+        return CreatedAtAction(nameof(GetDepartmentAsync), new {guid = department.DepartmentId}, response);          
     }
 
     // PUT - Update Department
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateDepartmentAsync(int id, UpdateDepartmentDTO dto)
+    [HttpPut("{guid}")]
+    public async Task<ActionResult> UpdateDepartmentAsync(Guid guid, UpdateDepartmentDTO dto)
     {
-        var department = await _context.Departments.FindAsync(id);
+        var department = await _context.Departments.FindAsync(guid);
 
         if (department == null) return NotFound();
 
@@ -87,7 +87,7 @@ public class DepartmentsController : ControllerBase
     }
 
     // DELETE - Delete Department
-    [HttpDelete("{id}")]
+    [HttpDelete("{guid}")]
     public async Task<ActionResult> DeleteDepartmentAsync(Guid guid)
     {
         var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == guid && d.IsActive);

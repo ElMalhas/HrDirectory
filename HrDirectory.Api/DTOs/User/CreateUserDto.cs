@@ -7,7 +7,7 @@ public class CreateUserDTO
 {
     public required string Name {get; set;} 
 
-    [EmailAddress]
+    [EmailAddress(ErrorMessage = "Please enter a valid email.")]
     public required string Email {get; set;} 
 
     public required string PhoneNumber {get; set;}

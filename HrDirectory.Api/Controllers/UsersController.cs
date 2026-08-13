@@ -21,7 +21,7 @@ public class UsersController : ControllerBase
     }
 
     // GET - Fetch User
-    [HttpGet("{id}")]
+    [HttpGet("{guid}")]
     public async Task<ActionResult<ReadUserDTO>> GetUserAsync(Guid guid)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == guid && u.IsActive);
@@ -55,6 +55,7 @@ public class UsersController : ControllerBase
     }
 
     // POST - Create User
+    [HttpPost]
     public async Task<ActionResult<ReadUserDTO>> CreateUserAsync (CreateUserDTO dto)
     {
         // Check if email exists on DB
@@ -91,12 +92,12 @@ public class UsersController : ControllerBase
             PhoneNumber = user.PhoneNumber
         };
 
-        return CreatedAtAction(nameof(GetUserAsync), new { id = user.UserId }, response);
+        return CreatedAtAction(nameof(GetUserAsync), new { guid = user.UserId }, response);
 
     }
 
     // DELETE - Delete User
-    [HttpDelete("{id}")]
+    [HttpDelete("{guid}")]
     public async Task<ActionResult> DeleteUserAsync(Guid guid)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == guid && u.IsActive);
