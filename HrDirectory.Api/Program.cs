@@ -22,6 +22,9 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+builder.Services.AddControllers();          // Tells the app that Controllers will be used
+
 var app = builder.Build();
 
 // Only activate Swagger in DEV environment
@@ -32,6 +35,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();                      // Map the routes from the Controllers
 
 // Activate CORS before endpoints
 app.UseCors("AllowReactApp");

@@ -14,7 +14,7 @@ public class Department
     [MaxLength(50)]
     public string? Description {get; set;}
 
-    public bool IsActive {get; set;}
+    public bool IsActive {get; set;} = true;
     public DateTime CreatedOn {get; set;} = DateTime.UtcNow;
     public DateTime UpdatedOn {get; set;} = DateTime.UtcNow;
 }
