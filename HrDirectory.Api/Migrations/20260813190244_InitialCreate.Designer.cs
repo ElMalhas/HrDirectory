@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HrDirectory.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260813184505_AddUserSessionsTable")]
-    partial class AddUserSessionsTable
+    [Migration("20260813190244_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,31 +6,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HrDirectory.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserSessionsTable : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<Guid>(
-                name: "DepartmentId",
-                table: "Departments",
-                type: "TEXT",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "INTEGER")
-                .OldAnnotation("Sqlite:Autoincrement", true);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "CreatedBy",
-                table: "Departments",
-                type: "TEXT",
-                nullable: true);
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "UpdatedBy",
-                table: "Departments",
-                type: "TEXT",
-                nullable: true);
+            migrationBuilder.CreateTable(
+                name: "Departments",
+                columns: table => new
+                {
+                    DepartmentId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedOn = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "TEXT", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departments", x => x.DepartmentId);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Users",
@@ -88,27 +85,13 @@ namespace HrDirectory.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Departments");
+
+            migrationBuilder.DropTable(
                 name: "UserSessions");
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropColumn(
-                name: "CreatedBy",
-                table: "Departments");
-
-            migrationBuilder.DropColumn(
-                name: "UpdatedBy",
-                table: "Departments");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "DepartmentId",
-                table: "Departments",
-                type: "INTEGER",
-                nullable: false,
-                oldClrType: typeof(Guid),
-                oldType: "TEXT")
-                .Annotation("Sqlite:Autoincrement", true);
         }
     }
 }

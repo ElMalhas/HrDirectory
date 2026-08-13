@@ -6,8 +6,8 @@ using HrDirectory.Api.DTOs;
 
 namespace HrDirectory.Api.Controllers;
 
-[Route("api/[controller]")]         // Tells the app to use the name of the controller for the atual route of the endpoints
-[ApiController]                     // Tells the app that this class will handle HTTP requests
+[Route("api/[controller]")]         
+[ApiController]                     
 public class DepartmentsController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -17,7 +17,6 @@ public class DepartmentsController : ControllerBase
         _context = context;
     }
 
-    // GET - Fetch Department
     [HttpGet("{guid}")]           
     public async Task<ActionResult<ReadDepartmentDTO>> GetDepartmentAsync(Guid guid)
     {
@@ -34,7 +33,6 @@ public class DepartmentsController : ControllerBase
         return dto;
     }
     
-    // GET - Fetch all Departments
    [HttpGet]
     public async Task<ActionResult<IEnumerable<ReadDepartmentDTO>>> GetDepartmentsAsync()
     {
@@ -47,7 +45,6 @@ public class DepartmentsController : ControllerBase
             .ToListAsync();
     }
 
-    // POST - Create Department
     [HttpPost]                 
     public async Task<ActionResult<ReadDepartmentDTO>> CreateDepartmentAsync(CreateDepartmentDTO dto)
     {
@@ -66,14 +63,13 @@ public class DepartmentsController : ControllerBase
             Description = department.Description
         };
 
-        return CreatedAtAction(nameof(GetDepartmentAsync), new {guid = department.DepartmentId}, response);          
+        return CreatedAtAction("GetDepartment", new {guid = department.DepartmentId}, response);          
     }
 
-    // PUT - Update Department
     [HttpPut("{guid}")]
     public async Task<ActionResult> UpdateDepartmentAsync(Guid guid, UpdateDepartmentDTO dto)
     {
-        var department = await _context.Departments.FindAsync(guid);
+        var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == guid && d.IsActive);
 
         if (department == null) return NotFound();
 
@@ -86,7 +82,6 @@ public class DepartmentsController : ControllerBase
         return NoContent();
     }
 
-    // DELETE - Delete Department
     [HttpDelete("{guid}")]
     public async Task<ActionResult> DeleteDepartmentAsync(Guid guid)
     {

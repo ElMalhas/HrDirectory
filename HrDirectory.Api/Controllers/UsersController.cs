@@ -20,7 +20,6 @@ public class UsersController : ControllerBase
                     ?? throw new InvalidOperationException("Pepper not configured.");
     }
 
-    // GET - Fetch User
     [HttpGet("{guid}")]
     public async Task<ActionResult<ReadUserDTO>> GetUserAsync(Guid guid)
     {
@@ -39,7 +38,6 @@ public class UsersController : ControllerBase
         return dto;
     }
 
-    // GET - Fetch all Users
     [HttpGet]
     public async Task<ActionResult<IEnumerable<ReadUserDTO>>> GetUsersAsync()
     {
@@ -54,22 +52,17 @@ public class UsersController : ControllerBase
             .ToListAsync();
     }
 
-    // POST - Create User
     [HttpPost]
     public async Task<ActionResult<ReadUserDTO>> CreateUserAsync (CreateUserDTO dto)
     {
-        // Check if email exists on DB
-        var emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == dto.Email.ToLower());
+        var emailExists = await _context.Users.AnyAsync(u => u.Email.ToLower() == dto.Email.ToLower() && u.IsActive);
 
         if (emailExists)
         {
             return BadRequest("Email already exists.");
         }
 
-        // Combine password with pepper
         string passwordWithPepper = dto.Password + _pepper;
-
-        // Generate the Hash using BCrypt
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(passwordWithPepper);
 
         var user = new User
@@ -92,11 +85,9 @@ public class UsersController : ControllerBase
             PhoneNumber = user.PhoneNumber
         };
 
-        return CreatedAtAction(nameof(GetUserAsync), new { guid = user.UserId }, response);
-
+        return CreatedAtAction("GetUser", new { guid = user.UserId }, response);
     }
 
-    // DELETE - Delete User
     [HttpDelete("{guid}")]
     public async Task<ActionResult> DeleteUserAsync(Guid guid)
     {
