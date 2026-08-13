@@ -2,19 +2,33 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HrDirectory.Api.Models;
 
-public class Department
+public class Department : BaseModel
 {
-    [Key]
-    public int DepartmentId  {get; set;}
+    public Guid DepartmentId { get; set; } = Guid.NewGuid();
 
-    [Required]
-    [MaxLength(20)]
-    public string Name {get; set;} = string.Empty;
+    public required string Name { get; set; }
 
-    [MaxLength(50)]
-    public string? Description {get; set;}
+    public string? Description { get; set; }
 
-    public bool IsActive {get; set;} = true;
-    public DateTime CreatedOn {get; set;} = DateTime.UtcNow;
-    public DateTime UpdatedOn {get; set;} = DateTime.UtcNow;
+
+    public static Department Create(string name, string? description)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ValidationException("Name is mandatory.");
+
+        return new Department
+        {
+            Name = name,
+            Description = description,
+        };
+    }
+
+    public void Update(string name, string? description)
+    {
+        if (!string.IsNullOrWhiteSpace(name))
+            Name = name;
+
+        if (!string.IsNullOrWhiteSpace(description))
+            Description = description;
+    }
 }

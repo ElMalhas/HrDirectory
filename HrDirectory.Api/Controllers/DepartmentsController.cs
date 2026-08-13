@@ -19,15 +19,14 @@ public class DepartmentsController : ControllerBase
 
     // GET - Fetch Department
     [HttpGet("{id}")]           
-    public async Task<ActionResult<ReadDepartmentDTO>> GetDepartmentAsync(int id)
+    public async Task<ActionResult<ReadDepartmentDTO>> GetDepartmentAsync(Guid guid)
     {
-        var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == id && d.IsActive);
+        var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == guid && d.IsActive);
 
         if (department == null) return NotFound();
 
         var dto = new ReadDepartmentDTO
         {
-            DepartmentId = department.DepartmentId,
             Name = department.Name,
             Description = department.Description
         };
@@ -42,7 +41,6 @@ public class DepartmentsController : ControllerBase
         return await _context.Departments.AsNoTracking().Where(d => d.IsActive)
             .Select(d => new ReadDepartmentDTO
             {
-                DepartmentId = d.DepartmentId,
                 Name = d.Name,
                 Description = d.Description
             })
@@ -51,38 +49,36 @@ public class DepartmentsController : ControllerBase
 
     // POST - Create Department
     [HttpPost]                 
-    public async Task<ActionResult<ReadDepartmentDTO>> CreateDepartmentAsync(CreateDepartmentDTO department)
+    public async Task<ActionResult<ReadDepartmentDTO>> CreateDepartmentAsync(CreateDepartmentDTO dto)
     {
-        var newDepartment = new Department
+        var department = new Department
+        {
+            Name = dto.Name,
+            Description = dto.Description
+        };
+        
+        _context.Departments.Add(department);
+        await _context.SaveChangesAsync();
+
+        var response = new ReadDepartmentDTO
         {
             Name = department.Name,
             Description = department.Description
         };
-        
-        _context.Departments.Add(newDepartment);
 
-        await _context.SaveChangesAsync();
-
-        var dto = new ReadDepartmentDTO
-        {
-            DepartmentId = newDepartment.DepartmentId,
-            Name = newDepartment.Name,
-            Description = newDepartment.Description
-        };
-
-        return CreatedAtAction(nameof(GetDepartmentAsync), new {id = newDepartment.DepartmentId}, dto);          
+        return CreatedAtAction(nameof(GetDepartmentAsync), new {id = department.DepartmentId}, response);          
     }
 
     // PUT - Update Department
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateDepartmentAsync(int id, UpdateDepartmentDTO updatedDepartment)
+    public async Task<ActionResult> UpdateDepartmentAsync(int id, UpdateDepartmentDTO dto)
     {
         var department = await _context.Departments.FindAsync(id);
 
         if (department == null) return NotFound();
 
-        department.Name = updatedDepartment.Name;
-        department.Description = updatedDepartment.Description;
+        department.Name = dto.Name;
+        department.Description = dto.Description;
         department.UpdatedOn = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
@@ -92,9 +88,9 @@ public class DepartmentsController : ControllerBase
 
     // DELETE - Delete Department
     [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteDepartmentAsync(int id)
+    public async Task<ActionResult> DeleteDepartmentAsync(Guid guid)
     {
-        var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == id && d.IsActive);
+        var department = await _context.Departments.FirstOrDefaultAsync(d => d.DepartmentId == guid && d.IsActive);
 
         if (department == null) return NotFound();
 

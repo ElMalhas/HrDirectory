@@ -10,5 +10,6 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<Department> Departments { get; set; }
+    public DbSet<User> Users { get; set; }
 
 }
