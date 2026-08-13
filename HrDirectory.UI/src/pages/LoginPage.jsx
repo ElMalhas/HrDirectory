@@ -39,7 +39,7 @@ function LoginPage({ onLoginSuccess }) {
         setIsLoading(true);
 
         if (!email || !password) {
-            setErrorMessage('Por favor, preencha todos os campos.');
+            setErrorMessage('Please fill-in all fields.');
             setIsLoading(false);
             return;
         }
@@ -50,7 +50,7 @@ function LoginPage({ onLoginSuccess }) {
                 onLoginSuccess();
             }
         } catch (err) {
-            setErrorMessage(err.message || 'Erro ao efetuar login. Tente novamente.');
+            setErrorMessage(err.message || 'Error while login. Please try again later.');
         } finally {
             setIsLoading(false);
         }
@@ -110,7 +110,7 @@ function LoginPage({ onLoginSuccess }) {
                     align="center"
                     sx={{ mb: 3, mt: 0.5 }}
                 >
-                    Insira as suas credenciais para aceder ao painel
+                    Insert your credentials to access the aplication
                 </Typography>
 
                 {/* Mensagem de Erro */}

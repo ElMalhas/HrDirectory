@@ -4,7 +4,7 @@ import LoginPage from './pages/LoginPage';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Verifica se o utilizador já tem sessão ao abrir a página
+  // Checks if the user is already authenticated
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (token) {
@@ -18,12 +18,12 @@ function App() {
     setIsAuthenticated(false);
   };
 
-  // Se não estiver autenticado, mostra o ecrã de Login
+  // Shows the login screen if the user is not authenticated
   if (!isAuthenticated) {
     return <LoginPage onLoginSuccess={() => setIsAuthenticated(true)} />;
   }
 
-  // Se estiver autenticado, mostra a aplicação (futura DepartmentsPage)
+  // Shows the landing page if the user is authenticated
   return (
     <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
       <h1>HR Directory Frontend</h1>
