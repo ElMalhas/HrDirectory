@@ -110,7 +110,7 @@ function LoginPage({ onLoginSuccess }) {
                     align="center"
                     sx={{ mb: 3, mt: 0.5 }}
                 >
-                    Insert your credentials to access the aplication
+                    Insert your credentials to access the application.
                 </Typography>
 
                 {/* Mensagem de Erro */}
